@@ -1,6 +1,7 @@
 package bio.ferlab.clin.idx.examples
 
 import org.apache.spark.sql.SparkSession
+import org.elasticsearch.spark.sql.sparkDatasetFunctions
 
 object Indexer extends App {
 
@@ -10,6 +11,7 @@ object Indexer extends App {
     .appName(s"Indexer").getOrCreate()
 
   val df = spark.read.json("s3a://spark/ectrat2/extract/") //.withColumn("id", sha1(functions.concat($"chromosome", $"start", $"reference", $"alternate")))
+
 
 
   df.saveToEs("spark3/docs", Map("es.mapping.id" -> "id"))

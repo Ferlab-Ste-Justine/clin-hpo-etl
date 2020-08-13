@@ -3,9 +3,12 @@ package bio.ferlab.clin.idx.examples
 import org.apache.spark.sql.SparkSession
 import org.elasticsearch.spark.sql._
 
+
 case class Data(id: String, person: Person, address: Option[Address])
 
 case class Person(name: String, age: Int)
+
+case class Address(city: String, civic: Int)
 
 object Updater extends App {
 
@@ -30,7 +33,3 @@ object Updater extends App {
 //, "es.write.operation" -> "update"
 
 }
-
-case class Address(city: String, civic: Int)
-
-

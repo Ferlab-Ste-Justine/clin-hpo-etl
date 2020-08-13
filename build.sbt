@@ -12,7 +12,9 @@ val spark_version = "2.4.6"
 libraryDependencies +=  "org.apache.spark" %% "spark-sql" % spark_version % Provided
 libraryDependencies += "org.elasticsearch" %% "elasticsearch-spark-20" % "7.8.1" % Provided
 /* Test */
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.0" % "test"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.0" % "test"
+libraryDependencies += "org.apache.spark" %% "spark-hive" % spark_version % "test"
+libraryDependencies ++= Seq("junit" % "junit" % "4.8.1" % "test")
 
 test in assembly := {}
 
