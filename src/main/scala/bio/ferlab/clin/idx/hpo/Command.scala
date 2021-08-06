@@ -10,7 +10,7 @@ abstract class ReadHPODataCommand extends Command[Unit, DataFrame]()
 
 object ReadHPOData{
   def fromJson(spark: SparkSession): DataFrame = {
-    spark.read.json(getClass.getResource("./hpo_terms.json").getFile)
+    spark.read.json(getClass.getResource("./hpo_terms_2021_08_02.json").getFile)
   }
 }
 
