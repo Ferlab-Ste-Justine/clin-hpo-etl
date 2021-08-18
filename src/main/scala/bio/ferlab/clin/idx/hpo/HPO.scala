@@ -1,26 +1,33 @@
 package bio.ferlab.clin.idx.hpo
 
+import org.apache.log4j.{Level, Logger}
+import org.slf4j.LoggerFactory
 import org.apache.spark.sql.functions.{col, collect_list, explode, struct}
 import org.apache.spark.sql.{DataFrame, Dataset, SparkSession}
 import org.elasticsearch.spark.sql.sparkDatasetFunctions
 
 object HPO extends App {
+
+  Logger.getLogger("ferlab").setLevel(Level.INFO)
+  val log = LoggerFactory.getLogger(this.getClass)
+
   implicit val spark: SparkSession = SparkSession.builder
-    .master("local")
-    //    .config("es.index.auto.create", "true")
-    .appName(s"HPOIndexer").getOrCreate()
+    .getOrCreate()
 
   case class HPOEntry(id: String, name: String, parents: Seq[String] = Seq.empty, ancestors: Seq[AncestorData] = Seq.empty, is_leaf: Boolean)
 
   case class AncestorData(id: String, name: String, parents: Seq[String] = Seq.empty)
-
   import spark.implicits._
 
-  private val dataSet = ReadHPOData.fromJson(spark).as[HPOEntry]
-  private val filteredDataSet = transform(dataSet)
+  if(args.length >= 2) {
+    val Array(inputPath, indexName) = args
+    val dataSet = ReadHPOData.fromParquet(inputPath)(spark).as[HPOEntry]
+    val filteredDataSet = transform(dataSet)
 
-  filteredDataSet.toDF.saveToEs("sparktest")
-
+    filteredDataSet.toDF.saveToEs(indexName)
+  } else{
+    log.error("HPO terms Input Path missing")
+  }
 
   /**
    * Transform the DataSet into to desired output DataFrame.
@@ -48,6 +55,7 @@ object HPO extends App {
       .withColumnRenamed("hpo_name", "name")
   }
 }
+
 
 
 
