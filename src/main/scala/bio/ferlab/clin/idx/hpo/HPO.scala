@@ -1,32 +1,34 @@
 package bio.ferlab.clin.idx.hpo
 
+import bio.ferlab.datalake.spark3.elasticsearch.{ElasticSearchClient, Indexer}
 import org.apache.log4j.{Level, Logger}
-import org.slf4j.LoggerFactory
 import org.apache.spark.sql.functions.{col, collect_list, explode, struct}
 import org.apache.spark.sql.{DataFrame, Dataset, SparkSession}
-import org.elasticsearch.spark.sql.sparkDatasetFunctions
+import org.slf4j.LoggerFactory
 
 object HPO extends App {
 
-  Logger.getLogger("ferlab").setLevel(Level.INFO)
+  Logger.getLogger("HPO").setLevel(Level.INFO)
   val log = LoggerFactory.getLogger(this.getClass)
 
-  implicit val spark: SparkSession = SparkSession.builder
+  if(args.length >= 4) {
+    implicit val spark: SparkSession = SparkSession.builder
+    .config("es.index.auto.create", "true")
     .getOrCreate()
+    import spark.implicits._
+    implicit val esClient: ElasticSearchClient = new ElasticSearchClient(spark.conf.get("es.nodes").split(',').head)
 
-  case class HPOEntry(id: String, name: String, parents: Seq[String] = Seq.empty, ancestors: Seq[AncestorData] = Seq.empty, is_leaf: Boolean)
+    val Array(inputPath, indexName, releaseId) = args
 
-  case class AncestorData(id: String, name: String, parents: Seq[String] = Seq.empty)
-  import spark.implicits._
-
-  if(args.length >= 2) {
-    val Array(inputPath, indexName) = args
-    val dataSet = ReadHPOData.fromParquet(inputPath)(spark).as[HPOEntry]
+    val dataSet = spark.read.parquet(inputPath).as[HPOEntry]
     val filteredDataSet = transform(dataSet)
 
-    filteredDataSet.toDF.saveToEs(indexName)
+    val templatePath = HPO.getClass.getResource("/template/hpo.json").getFile
+    val job = new Indexer("index", templatePath, indexName, s"${indexName}_$releaseId")
+    job.run(filteredDataSet.toDF)
   } else{
-    log.error("HPO terms Input Path missing")
+    log.error("HPO terms Input Path, index name and release id are missing")
+    System.exit(-1)
   }
 
   /**
@@ -49,7 +51,7 @@ object HPO extends App {
       .agg(
         collect_list(
           struct("id", "name")
-        ) as ("compact_ancestors")
+        ) as "compact_ancestors"
       )
       .withColumnRenamed("hpo_id", "id")
       .withColumnRenamed("hpo_name", "name")
@@ -59,3 +61,6 @@ object HPO extends App {
 
 
 
+case class HPOEntry(id: String, name: String, parents: Seq[String] = Seq.empty, ancestors: Seq[AncestorData] = Seq.empty, is_leaf: Boolean)
+
+case class AncestorData(id: String, name: String, parents: Seq[String] = Seq.empty)

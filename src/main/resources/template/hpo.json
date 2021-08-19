@@ -1,0 +1,36 @@
+{
+  "index_patterns": ["hpo*"],
+  "settings": {
+    "number_of_shards": 2
+  },
+  "mappings": {
+    "properties" : {
+      "id": {
+        "type": "keyword"
+      },
+      "name": {
+        "type": "keyword"
+      },
+      "parents": {
+        "type": "keyword"
+      },
+      "is_leaf": {
+        "type": "boolean"
+      },
+      "ancestors": {
+        "type": "nested",
+        "properties": {
+          "id": {
+            "type": "keyword"
+          },
+          "name": {
+            "type": "keyword"
+          },
+          "parents": {
+            "type": "keyword"
+          }
+        }
+      }
+    }
+  }
+}
