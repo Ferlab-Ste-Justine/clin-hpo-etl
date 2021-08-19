@@ -11,7 +11,7 @@
 --conf "spark.hadoop.fs.s3a.secret.key=minioadmin" \
 --conf "spark.hadoop.fs.s3a.path.style.access=True" \
 --conf "spark.hadoop.fs.s3a.impl=org.apache.hadoop.fs.s3a.S3AFileSystem" \
-/home/adrianpaul/projects/clin-hpo-etl/target/scala-2.12/clin-etl-indexer.jar \
+/home/adrianpaul/projects/clin-hpo-etl/target/scala-2.12/clin-hpo-etl.jar \
 /home/adrianpaul/projects/obo-parser/src/output \
 hpo_2021_08_18_v4
 

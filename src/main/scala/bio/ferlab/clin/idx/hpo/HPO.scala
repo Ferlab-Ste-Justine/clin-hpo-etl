@@ -21,7 +21,7 @@ object HPO extends App {
 
   if(args.length >= 2) {
     val Array(inputPath, indexName) = args
-    val dataSet = ReadHPOData.fromParquet(inputPath)(spark).as[HPOEntry]
+    val dataSet = spark.read.parquet(inputPath).as[HPOEntry]
     val filteredDataSet = transform(dataSet)
 
     filteredDataSet.toDF.saveToEs(indexName)
@@ -49,7 +49,7 @@ object HPO extends App {
       .agg(
         collect_list(
           struct("id", "name")
-        ) as ("compact_ancestors")
+        ) as "compact_ancestors"
       )
       .withColumnRenamed("hpo_id", "id")
       .withColumnRenamed("hpo_name", "name")

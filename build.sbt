@@ -1,4 +1,4 @@
-name := "clin-etl-indexer"
+name := "clin-hpo-etl"
 
 version := "0.1"
 
@@ -11,10 +11,6 @@ val spark_version = "3.1.2"
 /* Runtime */
 libraryDependencies +=  "org.apache.spark" %% "spark-sql" % spark_version
 libraryDependencies += "org.elasticsearch" %% "elasticsearch-spark-30" % "7.12.0"
-libraryDependencies += "org.apache.hadoop" % "hadoop-common" % "3.3.0"
-libraryDependencies += "org.apache.hadoop" % "hadoop-client" % "3.3.0"
-libraryDependencies += "org.apache.hadoop" % "hadoop-aws" % "3.2.2"
-libraryDependencies += "com.amazonaws" % "aws-java-sdk-bundle" % "1.11.563"
 
 /* Test */
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.0" % "test"
