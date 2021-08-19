@@ -5,11 +5,12 @@ version := "0.1"
 scalaVersion := "2.12.12"
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
-
+val datalakeSpark3Version = "0.0.54"
 val spark_version = "3.1.2"
 
 /* Runtime */
 libraryDependencies +=  "org.apache.spark" %% "spark-sql" % spark_version
+libraryDependencies += "bio.ferlab" %% "datalake-spark3" % datalakeSpark3Version
 libraryDependencies += "org.elasticsearch" %% "elasticsearch-spark-30" % "7.12.0"
 
 /* Test */
