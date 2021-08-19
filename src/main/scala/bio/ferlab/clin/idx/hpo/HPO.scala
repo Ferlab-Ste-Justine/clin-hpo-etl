@@ -11,7 +11,7 @@ object HPO extends App {
   Logger.getLogger("HPO").setLevel(Level.INFO)
   val log = LoggerFactory.getLogger(this.getClass)
 
-  if(args.length >= 4) {
+  if(args.length >= 3) {
     implicit val spark: SparkSession = SparkSession.builder
     .config("es.index.auto.create", "true")
     .getOrCreate()
