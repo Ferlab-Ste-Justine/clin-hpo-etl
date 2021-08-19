@@ -9,7 +9,7 @@ val datalakeSpark3Version = "0.0.54"
 val spark_version = "3.1.2"
 
 /* Runtime */
-libraryDependencies +=  "org.apache.spark" %% "spark-sql" % spark_version
+libraryDependencies +=  "org.apache.spark" %% "spark-sql" % spark_version % Provided
 libraryDependencies += "bio.ferlab" %% "datalake-spark3" % datalakeSpark3Version
 libraryDependencies += "org.elasticsearch" %% "elasticsearch-spark-30" % "7.12.0"
 
@@ -17,11 +17,16 @@ libraryDependencies += "org.elasticsearch" %% "elasticsearch-spark-30" % "7.12.0
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.0" % "test"
 libraryDependencies += "org.apache.spark" %% "spark-hive" % spark_version % "test"
 libraryDependencies ++= Seq("junit" % "junit" % "4.8.1" % "test")
+test / parallelExecution := false
+fork := true
 
+assembly / test:= {}
 
-test in assembly := {}
+assembly / assemblyShadeRules := Seq(
+  ShadeRule.rename("shapeless.**" -> "shadeshapless.@1").inAll
+)
 
-assemblyMergeStrategy in assembly := {
+assembly / assemblyMergeStrategy := {
   case "META-INF/io.netty.versions.properties" => MergeStrategy.last
   case "META-INF/native/libnetty_transport_native_epoll_x86_64.so" => MergeStrategy.last
   case "META-INF/DISCLAIMER" => MergeStrategy.last
@@ -29,10 +34,9 @@ assemblyMergeStrategy in assembly := {
   case "overview.html" => MergeStrategy.last
   case "git.properties" => MergeStrategy.discard
   case "mime.types" => MergeStrategy.first
+  case PathList("scala", "annotation", "nowarn.class" | "nowarn$.class") => MergeStrategy.first
   case x =>
-    val oldStrategy = (assemblyMergeStrategy in assembly).value
+    val oldStrategy = (assembly / assemblyMergeStrategy).value
     oldStrategy(x)
-//  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
-//  case x => MergeStrategy.first
 }
 assemblyJarName in assembly := "clin-hpo-etl.jar"
