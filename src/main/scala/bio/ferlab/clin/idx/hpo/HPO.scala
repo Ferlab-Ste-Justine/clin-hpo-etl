@@ -16,7 +16,7 @@ object HPO extends App {
     .config("es.index.auto.create", "true")
     .getOrCreate()
     import spark.implicits._
-    implicit val esClient: ElasticSearchClient = new ElasticSearchClient(spark.conf.get("es.nodes").split(',').head)
+    implicit val esClient: ElasticSearchClient = new ElasticSearchClient(spark.conf.get("spark.es.nodes").split(',').head)
 
     val Array(inputPath, indexName, releaseId) = args
 
