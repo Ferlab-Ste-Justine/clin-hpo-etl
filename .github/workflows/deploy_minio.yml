@@ -25,9 +25,9 @@ jobs:
       - name: Minio Deploy jar
         uses: hkdobrev/minio-deploy-action@v1
         with:
-          endpoint: ${{ secrets.CLIN_QA_AWS_ENDPOINT }}
-          access_key: ${{ secrets.CLIN_QA_AWS_ACCESS_KEY_ID }}
-          secret_key: ${{ secrets.CLIN_QA_AWS_SECRET_ACCESS_KEY }}
+          endpoint: ${{ secrets.MINIO_CLIN_QA_AWS_ENDPOINT }}
+          access_key: ${{ secrets.MINIO_CLIN_QA_AWS_ACCESS_KEY_ID }}
+          secret_key: ${{ secrets.MINIO_CLIN_QA_AWS_SECRET_ACCESS_KEY }}
           bucket: 'clin-qa-app-datalake'
           source_dir: 'dist'
           target_dir: '/spark'
