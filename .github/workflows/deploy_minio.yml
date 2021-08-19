@@ -19,6 +19,9 @@ jobs:
       - name: Build Assembly
         run: sbt assembly
 
+      - name: Move file
+        run: rm -rf dist/ && mkdir dist && cp target/scala-2.12/clin-hpo-etl.jar dist/
+
       - name: Minio Deploy jar
         uses: hkdobrev/minio-deploy-action@v1
         with:
@@ -26,5 +29,5 @@ jobs:
           access_key: ${{ secrets.CLIN_QA_AWS_ACCESS_KEY_ID }}
           secret_key: ${{ secrets.CLIN_QA_AWS_SECRET_ACCESS_KEY }}
           bucket: 'clin-qa-app-datalake'
-          source_dir: 'target/scala-2.12/clin-hpo-etl.jar'
+          source_dir: 'dist'
           target_dir: '/spark'
