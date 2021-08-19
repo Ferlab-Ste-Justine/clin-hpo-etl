@@ -39,5 +39,5 @@ jobs:
           access_key: ${{ secrets.MINIO_CLIN_QA_AWS_ACCESS_KEY_ID }}
           secret_key: ${{ secrets.MINIO_CLIN_QA_AWS_SECRET_ACCESS_KEY }}
           bucket: 'clin-qa-app-datalake'
-          source_dir: 'src/main/resources/templates'
+          source_dir: 'src/main/resources/template'
           target_dir: '/jobs/templates'
