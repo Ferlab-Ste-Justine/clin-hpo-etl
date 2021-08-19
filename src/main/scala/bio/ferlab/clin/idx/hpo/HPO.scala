@@ -11,19 +11,18 @@ object HPO extends App {
   Logger.getLogger("HPO").setLevel(Level.INFO)
   val log = LoggerFactory.getLogger(this.getClass)
 
-  if(args.length >= 3) {
+  if(args.length >= 4) {
     implicit val spark: SparkSession = SparkSession.builder
     .config("es.index.auto.create", "true")
     .getOrCreate()
     import spark.implicits._
     implicit val esClient: ElasticSearchClient = new ElasticSearchClient(spark.conf.get("spark.es.nodes").split(',').head)
 
-    val Array(inputPath, indexName, releaseId) = args
+    val Array(inputPath, indexName, releaseId, templatePath) = args
 
     val dataSet = spark.read.parquet(inputPath).as[HPOEntry]
     val filteredDataSet = transform(dataSet)
 
-    val templatePath = HPO.getClass.getResource("/template/hpo.json").getFile
     val job = new Indexer("index", templatePath, indexName, s"${indexName}_$releaseId")
     job.run(filteredDataSet.toDF)
   } else{
