@@ -40,25 +40,22 @@ object HPO extends App {
     dataSet
       .select(col("*"), explode(col("ancestors")).as("ancestor")).drop("ancestors")
       .select(
-        col("id").as("hpo_id"),
+        col("id"),
         col("name").as("hpo_name"),
         col("parents"),
         col("is_leaf"),
-        col("ancestor.id").as("id"),
+        col("ancestor.id").as("hpo_id"),
         col("ancestor.name").as("name"))
-      .groupBy(col("hpo_id"), col("hpo_name"), col("parents"), col("is_leaf"))
+      .groupBy(col("id"), col("hpo_name"), col("parents"), col("is_leaf"))
       .agg(
         collect_list(
-          struct("id", "name")
+          struct("hpo_id", "name")
         ) as "compact_ancestors"
       )
-      .withColumnRenamed("hpo_id", "id")
+      .withColumnRenamed("id", "hpo_id")
       .withColumnRenamed("hpo_name", "name")
   }
 }
-
-
-
 
 case class HPOEntry(id: String, name: String, parents: Seq[String] = Seq.empty, ancestors: Seq[AncestorData] = Seq.empty, is_leaf: Boolean)
 
